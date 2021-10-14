@@ -21,7 +21,7 @@
         "guzzlehttp/guzzle": "^7.0"
     },
     "autoload": {
-        "psr4": {
+        "psr-4": {
             "Wmoob\\": "src/"
         }
     }
