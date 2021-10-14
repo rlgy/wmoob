@@ -1,7 +1,7 @@
 # wmoob
 
 #### 介绍
-语义化微盟PHP SDK
+微盟PHP SDK
 
 #### 使用说明
 
