@@ -9,8 +9,6 @@
 
 namespace Wmoob;
 
-use GuzzleHttp\ClientInterface;
-
 /**
  * weimob cloud php skd
  */
@@ -28,18 +26,31 @@ class Wmoob extends \ArrayIterator implements Chainable
      */
     protected $client;
 
-    public function __construct(array $array, ClientDecorator $client)
+    private function __construct(array $array, ClientDecorator $client)
     {
         parent::__construct($array, self::STD_PROP_LIST | self::ARRAY_AS_PROPS);
         $this->client = $client;
     }
 
-    /**
-     * @inheritDoc
-     */
+    public static function getInstance(array $config)
+    {
+        return new self([], new ClientDecorator($config));
+    }
+
     public function chain($segment): Chainable
     {
         return $this->offsetGet($segment);
+    }
+
+    public function offsetGet($key): Chainable
+    {
+        if (!$this->offsetExists($key)) {
+            $indices = $this->simplized();
+            $indices[] = $this->normalize($key);
+            $this->offsetSet($key, new self($indices, $this->getDriver()));
+        }
+
+        return parent::offsetGet($key);
     }
 
     public function getDriver(): ClientDecorator
@@ -52,15 +63,6 @@ class Wmoob extends \ArrayIterator implements Chainable
         return implode($separator, $this->simplized());
     }
 
-    /**
-     * Normalize the `$thing` by the rules: `PascalCase` -> `camelCase`
-     *                                    & `camelCase` -> `camel-case`
-     *                                    & `_dynamic_` -> `{dynamic}`
-     *
-     * @param string $thing - The string waiting for normalization
-     *
-     * @return string
-     */
     protected function normalize(string $thing = ''): string
     {
         return preg_replace_callback_array([
@@ -76,11 +78,6 @@ class Wmoob extends \ArrayIterator implements Chainable
             ], $thing) ?? $thing;
     }
 
-    /**
-     * Only retrieve a copy array of the URI segments
-     *
-     * @return (string|int)[] - The URI segments array
-     */
     protected function simplized(): array
     {
         return array_filter($this->getArrayCopy(), static function ($v) {
@@ -88,17 +85,4 @@ class Wmoob extends \ArrayIterator implements Chainable
         });
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function offsetGet($key): Chainable
-    {
-        if (!$this->offsetExists($key)) {
-            $indices = $this->simplized();
-            $indices[] = $this->normalize($key);
-            $this->offsetSet($key, new self($indices, $this->getDriver()));
-        }
-
-        return parent::offsetGet($key);
-    }
 }
