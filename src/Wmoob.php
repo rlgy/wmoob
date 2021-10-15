@@ -69,9 +69,6 @@ class Wmoob extends \ArrayIterator implements Chainable
                 '#^[A-Z]#' => static function (array $piece): string {
                     return strtolower($piece[0]);
                 },
-                '#[A-Z]#' => static function (array $piece): string {
-                    return '-' . strtolower($piece[0]);
-                },
                 '#^_(.*)_$#' => static function (array $piece): string {
                     return '{' . $piece[1] . '}';
                 },
