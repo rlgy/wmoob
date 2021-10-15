@@ -1,6 +1,6 @@
 {
     "name": "rlgyzhcn/wmoob",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "weimob cloud PHP SDK",
     "minimum-stability": "stable",
     "type": "library",
