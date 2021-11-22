@@ -42,8 +42,9 @@ class ListenerProvider implements ListenerProviderInterface
      * @param string $topic 主题 * 监听所有
      * @param string $name 具体事件名称 * 监听所有主题
      * @param \Wmoob\listeners\ListenerInterface $listener
+     * @param boolean $append 注册位置
      */
-    public function register($topic, $name, ListenerInterface $listener)
+    public function register($topic, $name, ListenerInterface $listener, $append = true)
     {
         if (!is_callable($listener)) {
             $listener = function (Message $message) use ($listener) {
@@ -55,14 +56,22 @@ class ListenerProvider implements ListenerProviderInterface
             if (!isset(static::$nameListeners[$name])) {
                 static::$nameListeners[$name] = [];
             }
-            static::$nameListeners[$name][] = [$listener, $topic];
+            if ($append) {
+                static::$nameListeners[$name][] = [$listener, $topic];
+            } else {
+                array_unshift(static::$nameListeners[$name], [$listener, $topic]);
+            }
         }
 
         if ($topic && empty($name)) {
             if (!isset(static::$topicListeners[$topic])) {
-                static::$nameListeners[$topic] = [];
+                static::$topicListeners[$topic] = [];
             }
-            static::$nameListeners[$topic][] = $listener;
+            if ($append) {
+                static::$topicListeners[$topic][] = $listener;
+            } else {
+                array_unshift(static::$topicListeners[$topic], $listener);
+            }
         }
     }
 

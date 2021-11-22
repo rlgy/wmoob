@@ -8,9 +8,13 @@
 
 namespace Wmoob\listeners;
 
+use Wmoob\exceptions\SignException;
 use Wmoob\Message;
 
-class SingValidatorListener extends AbstractListener
+/**
+ * 签名校验监听器
+ */
+class SignValidatorListener extends AbstractListener
 {
     /**
      * 应用id
@@ -36,28 +40,13 @@ class SingValidatorListener extends AbstractListener
      */
     public function handle(Message $message): void
     {
-        if (!$this->validate($message)) {
-            $message->stopped = true;
-        }
-    }
-
-    /**
-     * 验证签名
-     *
-     * @param \Wmoob\Message $message
-     *
-     * @return bool
-     */
-    private function validate(Message $message)
-    {
         if (strcasecmp($message->sign, md5($this->client_id . $message->id . $this->client_secret)) !== 0) {
-            return false;
+            throw new SignException("消息签名验证失败");
         }
         if (strcasecmp($message->msgSignature,
                 md5($this->client_id . $message->id . $message->msg_body . $this->client_secret)) !== 0) {
-            return false;
+            throw new SignException("消息内容签名验证失败");
         }
-        return true;
     }
 
 }

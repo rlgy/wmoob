@@ -19,6 +19,7 @@ interface ListenerInterface
      * @param \Wmoob\Message $message
      *
      * @return void
+     * @throws
      */
     public function handle(Message $message): void;
 }

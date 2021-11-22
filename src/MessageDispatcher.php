@@ -31,6 +31,9 @@ class MessageDispatcher implements EventDispatcherInterface
      */
     public function dispatch(object $event)
     {
+        if (!$this->container->has(ListenerProvider::class)) {
+            throw new \InvalidArgumentException("监听器供给器不存在");
+        }
         /**@var \Psr\EventDispatcher\ListenerProviderInterface $listenerProvider */
         $listenerProvider = $this->container->get(ListenerProvider::class);
 
