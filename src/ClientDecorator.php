@@ -96,9 +96,16 @@ class ClientDecorator
      */
     private static function prepare(string $uri): string
     {
-        return $uri && 0 === strncasecmp('fuwu/', $uri, 3)
-            ? $uri
-            : 'api/1_0/' . $uri;
+        if (stripos($uri, 'fuwu/') === 0) {
+            return $uri;
+        }
+        if (preg_match('#v1/|v2/#', $uri)) {
+            return preg_replace(['#v1/#', '#v2/#'], ['api/1_0/', 'api/2_0/'], $uri);
+        }
+        if ($uri) {
+            return 'api/1_0/' . $uri;
+        }
+        return '';
     }
 
     /**
