@@ -18,13 +18,36 @@ class ListenerProvider implements ListenerProviderInterface
      *
      * @var array
      */
-    private static $topicListeners = [];
+    private $topicListeners = [];
     /**
      * 具体事件名称
      *
      * @var array
      */
-    private static $nameListeners = [];
+    private $nameListeners = [];
+
+    private function __construct(array $config)
+    {
+        $this->topicListeners = [];
+        $this->nameListeners = [];
+        try {
+            foreach ($config as $item) {
+                $this->register($item[0], $item[1], $item[2]);
+            }
+        } catch (\OutOfRangeException $e) {
+            throw new \InvalidArgumentException('配置参数格式错误');
+        }
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return \Wmoob\ListenerProvider
+     */
+    public static function createInstance($config)
+    {
+        return new self($config);
+    }
 
     /**
      * @inheritDoc
@@ -40,37 +63,31 @@ class ListenerProvider implements ListenerProviderInterface
      * 注册事件监听器
      *
      * @param string $topic 主题 * 监听所有
-     * @param string $name 具体事件名称 * 监听所有主题
-     * @param \Wmoob\listeners\ListenerInterface $listener
+     * @param string $name 具体事件名称 * 监听所有
+     * @param callable $listener
      * @param boolean $append 注册位置
      */
-    public function register($topic, $name, ListenerInterface $listener, $append = true)
+    public function register($topic, $name, callable $listener, $append = true)
     {
-        if (!is_callable($listener)) {
-            $listener = function (Message $message) use ($listener) {
-                $listener->handle($message);
-            };
-        }
-
         if ($name) {
-            if (!isset(static::$nameListeners[$name])) {
-                static::$nameListeners[$name] = [];
+            if (!isset($this->nameListeners[$name])) {
+                $this->nameListeners[$name] = [];
             }
             if ($append) {
-                static::$nameListeners[$name][] = [$listener, $topic];
+                $this->nameListeners[$name][] = [$listener, $topic];
             } else {
-                array_unshift(static::$nameListeners[$name], [$listener, $topic]);
+                array_unshift($this->nameListeners[$name], [$listener, $topic]);
             }
         }
 
         if ($topic && empty($name)) {
-            if (!isset(static::$topicListeners[$topic])) {
-                static::$topicListeners[$topic] = [];
+            if (!isset($this->topicListeners[$topic])) {
+                $this->topicListeners[$topic] = [];
             }
             if ($append) {
-                static::$topicListeners[$topic][] = $listener;
+                $this->topicListeners[$topic][] = $listener;
             } else {
-                array_unshift(static::$topicListeners[$topic], $listener);
+                array_unshift($this->topicListeners[$topic], $listener);
             }
         }
     }
@@ -82,9 +99,9 @@ class ListenerProvider implements ListenerProviderInterface
      */
     public function getListenersByTopic($topic)
     {
-        $result = static::$topicListeners['*'] ?? [];
-        if ($topic != '*' && isset(static::$topicListeners[$topic])) {
-            $result = array_merge($result, static::$topicListeners[$topic]);
+        $result = $this->topicListeners['*'] ?? [];
+        if ($topic != '*' && isset($this->topicListeners[$topic])) {
+            $result = array_merge($result, $this->topicListeners[$topic]);
         }
         return $result;
     }
@@ -97,14 +114,14 @@ class ListenerProvider implements ListenerProviderInterface
      */
     public function getListenersByName($name, $topic)
     {
-        $result = static::$nameListeners[$name] ?? [];
-        if ($name != '*' && isset(static::$nameListeners[$name])) {
-            $result = array_merge($result, static::$nameListeners[$name]);
+        $result = $this->nameListeners['*'] ?? [];
+        if ($name != '*' && isset($this->nameListeners[$name])) {
+            $result = array_merge($result, $this->nameListeners[$name]);
         }
 
         if ($topic != '*') {
             $result = array_filter($result, function ($item) use ($topic) {
-                return $item[1] == $topic;
+                return $item[1] == $topic || $item['1'] == '*';
             });
         }
 

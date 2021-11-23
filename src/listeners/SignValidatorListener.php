@@ -10,11 +10,12 @@ namespace Wmoob\listeners;
 
 use Wmoob\exceptions\SignException;
 use Wmoob\Message;
+use Wmoob\annotation\ListenerAnnotation as Listener;
 
 /**
  * 签名校验监听器
  */
-class SignValidatorListener extends AbstractListener
+class SignValidatorListener
 {
     /**
      * 应用id
@@ -36,7 +37,8 @@ class SignValidatorListener extends AbstractListener
     }
 
     /**
-     * @inheritDoc
+     * @Listener(topic="*",name="*")
+     * @throws \Wmoob\exceptions\SignException
      */
     public function handle(Message $message): void
     {
