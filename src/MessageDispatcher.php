@@ -14,15 +14,13 @@ use Psr\EventDispatcher\StoppableEventInterface;
 class MessageDispatcher implements EventDispatcherInterface
 {
     /**
-     * 容器接口
-     *
-     * @var \Psr\Container\ContainerInterface
+     * @var \Wmoob\ListenerProvider
      */
-    protected $container;
+    protected $listenerProvider;
 
-    public function __construct($container)
+    public function __construct(ListenerProvider $listenerProvider)
     {
-        $this->container = $container;
+        $this->listenerProvider = $listenerProvider;
     }
 
     /**
@@ -31,13 +29,7 @@ class MessageDispatcher implements EventDispatcherInterface
      */
     public function dispatch(object $event)
     {
-        if (!$this->container->has(ListenerProvider::class)) {
-            throw new \InvalidArgumentException("监听器供给器不存在");
-        }
-        /**@var \Psr\EventDispatcher\ListenerProviderInterface $listenerProvider */
-        $listenerProvider = $this->container->get(ListenerProvider::class);
-
-        foreach ($listenerProvider->getListenersForEvent($event) as $listener) {
+        foreach ($this->listenerProvider->getListenersForEvent($event) as $listener) {
             $listener($event);
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
                 break;
