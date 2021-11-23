@@ -9,7 +9,6 @@
 namespace Wmoob;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
-use Wmoob\listeners\ListenerInterface;
 
 class ListenerProvider implements ListenerProviderInterface
 {
@@ -32,7 +31,7 @@ class ListenerProvider implements ListenerProviderInterface
         $this->nameListeners = [];
         try {
             foreach ($config as $item) {
-                $this->register($item[0], $item[1], $item[2]);
+                $this->register($item[0], $item[1], $item[2], $item[3]);
             }
         } catch (\OutOfRangeException $e) {
             throw new \InvalidArgumentException('配置参数格式错误');
@@ -64,31 +63,26 @@ class ListenerProvider implements ListenerProviderInterface
      *
      * @param string $topic 主题 * 监听所有
      * @param string $name 具体事件名称 * 监听所有
-     * @param callable $listener
-     * @param boolean $append 注册位置
+     * @param callable $listener 监听回调
+     * @param integer $wight 权重
      */
-    public function register($topic, $name, callable $listener, $append = true)
+    public function register($topic, $name, callable $listener, $wight = 0)
     {
+        // 主题监听器
+        if ($topic && $name == '*') {
+            if (!isset($this->topicListeners[$topic])) {
+                $this->topicListeners[$topic] = [];
+            }
+
+            $this->topicListeners[$topic][] = [$listener, $wight];
+        }
+
         if ($name) {
             if (!isset($this->nameListeners[$name])) {
                 $this->nameListeners[$name] = [];
             }
-            if ($append) {
-                $this->nameListeners[$name][] = [$listener, $topic];
-            } else {
-                array_unshift($this->nameListeners[$name], [$listener, $topic]);
-            }
-        }
 
-        if ($topic && empty($name)) {
-            if (!isset($this->topicListeners[$topic])) {
-                $this->topicListeners[$topic] = [];
-            }
-            if ($append) {
-                $this->topicListeners[$topic][] = $listener;
-            } else {
-                array_unshift($this->topicListeners[$topic], $listener);
-            }
+            $this->nameListeners[$name][] = [$listener, $topic, $wight];
         }
     }
 
@@ -103,7 +97,9 @@ class ListenerProvider implements ListenerProviderInterface
         if ($topic != '*' && isset($this->topicListeners[$topic])) {
             $result = array_merge($result, $this->topicListeners[$topic]);
         }
-        return $result;
+        $weight = array_column($result, 1);
+        array_multisort($weight, SORT_DESC, $result);
+        return array_column($result, 0);
     }
 
     /**
@@ -121,10 +117,11 @@ class ListenerProvider implements ListenerProviderInterface
 
         if ($topic != '*') {
             $result = array_filter($result, function ($item) use ($topic) {
-                return $item[1] == $topic || $item['1'] == '*';
+                return $item[1] == $topic || $item[1] == '*';
             });
         }
-
+        $weight = array_column($result, 2);
+        array_multisort($weight, SORT_DESC, $result);
         return array_column($result, 0);
     }
 
