@@ -10,6 +10,7 @@ namespace Wmoob;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
+use Wmoob\listeners\NullListener;
 
 class MessageDispatcher implements EventDispatcherInterface
 {
@@ -29,7 +30,11 @@ class MessageDispatcher implements EventDispatcherInterface
      */
     public function dispatch(object $event)
     {
-        foreach ($this->listenerProvider->getListenersForEvent($event) as $listener) {
+        $listeners = $this->listenerProvider->getListenersForEvent($event);
+        if (empty($listeners)) {
+            $listeners[] = new NullListener();
+        }
+        foreach ($listeners as $listener) {
             $listener($event);
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
                 break;
