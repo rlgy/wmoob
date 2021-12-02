@@ -28,9 +28,9 @@ class SymfonyDispatcherDecorator extends DispatcherDecorator implements MessageE
     /**
      * @inheritDoc
      */
-    public function dispatch(object $event)
+    public function dispatch(object $event, string $eventName = null): object
     {
-        return $this->dispatcher->dispatch($event);
+        return $this->dispatcher->dispatch($event, $eventName);
     }
 
     /**

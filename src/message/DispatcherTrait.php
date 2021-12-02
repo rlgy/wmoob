@@ -15,9 +15,9 @@ trait  DispatcherTrait
     /**
      * @inheritDoc
      */
-    public function dispatch(object $event)
+    public function dispatch(object $event, string $eventName = null): object
     {
-        return $this->getDispatcher()->dispatch($event);
+        return $this->getDispatcher()->dispatch($event, $eventName);
     }
 
     /**
