@@ -30,7 +30,7 @@ class SymfonyDispatcherDecorator extends DispatcherDecorator implements MessageE
      */
     public function dispatch(object $event)
     {
-        $this->dispatcher->dispatch($event);
+        return $this->dispatcher->dispatch($event);
     }
 
     /**
@@ -85,7 +85,7 @@ class SymfonyDispatcherDecorator extends DispatcherDecorator implements MessageE
      */
     public function getListeners(string $eventName = null)
     {
-        $this->dispatcher->getListeners($eventName);
+        return $this->dispatcher->getListeners($eventName);
     }
 
     /**
@@ -93,7 +93,7 @@ class SymfonyDispatcherDecorator extends DispatcherDecorator implements MessageE
      */
     public function getListenerPriority(string $eventName, callable $listener)
     {
-        $this->dispatcher->getListenerPriority($eventName, $listener);
+        return $this->dispatcher->getListenerPriority($eventName, $listener);
     }
 
     /**
@@ -101,7 +101,7 @@ class SymfonyDispatcherDecorator extends DispatcherDecorator implements MessageE
      */
     public function hasListeners(string $eventName = null)
     {
-        $this->dispatcher->hasListeners($eventName);
+        return $this->dispatcher->hasListeners($eventName);
     }
 
     /**

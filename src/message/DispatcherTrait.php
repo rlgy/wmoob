@@ -17,7 +17,7 @@ trait  DispatcherTrait
      */
     public function dispatch(object $event)
     {
-        $this->getDispatcher()->dispatch($event);
+        return $this->getDispatcher()->dispatch($event);
     }
 
     /**
@@ -54,7 +54,7 @@ trait  DispatcherTrait
      */
     public function getListeners(string $eventName = null)
     {
-        $this->getDispatcher()->getListeners($eventName);
+        return $this->getDispatcher()->getListeners($eventName);
     }
 
     /**
@@ -62,7 +62,7 @@ trait  DispatcherTrait
      */
     public function getListenerPriority(string $eventName, callable $listener)
     {
-        $this->getDispatcher()->getListenerPriority($eventName, $listener);
+        return $this->getDispatcher()->getListenerPriority($eventName, $listener);
     }
 
     /**
@@ -70,6 +70,6 @@ trait  DispatcherTrait
      */
     public function hasListeners(string $eventName = null)
     {
-        $this->getDispatcher()->hasListeners($eventName);
+        return $this->getDispatcher()->hasListeners($eventName);
     }
 }
