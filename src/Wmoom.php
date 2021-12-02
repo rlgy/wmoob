@@ -8,7 +8,7 @@
 
 namespace Wmoob;
 
-use Wmoob\message\DispatcherDecorator;
+use Wmoob\message\DispatcherDecoratorInterface;
 use Wmoob\message\DispatcherTrait;
 use Wmoob\message\MessageEventDispatcherInterface;
 use Wmoob\message\SymfonyDispatcherDecorator;
@@ -20,10 +20,10 @@ class Wmoom implements MessageEventDispatcherInterface
 {
     use DispatcherTrait;
 
-    /**@var DispatcherDecorator */
+    /**@var DispatcherDecoratorInterface */
     private $decorator;
 
-    public function __construct(DispatcherDecorator $decorator = null)
+    public function __construct(DispatcherDecoratorInterface $decorator = null)
     {
         $decorator === null ? $this->decorator = static::createSymfonyDispatcherDecorator() : $this->decorator = $decorator;
     }

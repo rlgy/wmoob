@@ -8,7 +8,7 @@
 
 namespace Wmoob\message;
 
-abstract class DispatcherDecorator
+interface DispatcherDecoratorInterface
 {
-    abstract function getDispatcher(): MessageEventDispatcherInterface;
+    function getDispatcher(): MessageEventDispatcherInterface;
 }

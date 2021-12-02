@@ -10,7 +10,7 @@ namespace Wmoob\message;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 
-class MessageEvent implements StoppableEventInterface
+class MessageEvent implements StoppableEventInterface, MessageInterface
 {
     private $propagationStopped = false;
 
@@ -25,7 +25,7 @@ class MessageEvent implements StoppableEventInterface
     /**
      * @return \Wmoob\message\Message
      */
-    public function getMessage()
+    public function getMessage(): Message
     {
         return $this->message;
     }

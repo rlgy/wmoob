@@ -10,7 +10,7 @@ namespace Wmoob\message;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class SymfonyDispatcherDecorator extends DispatcherDecorator implements MessageEventDispatcherInterface
+class SymfonyDispatcherDecorator implements MessageEventDispatcherInterface, DispatcherDecoratorInterface
 {
     /**@var \Symfony\Component\EventDispatcher\EventDispatcher */
     private $dispatcher;
