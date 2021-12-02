@@ -1,6 +1,6 @@
 {
     "name": "rlgyzhcn/wmoob",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "weimob cloud PHP SDK",
     "minimum-stability": "stable",
     "type": "library",
@@ -19,7 +19,8 @@
         "ext-curl": "*",
         "guzzlehttp/uri-template": "^1.0",
         "guzzlehttp/guzzle": "^7.0",
-        "psr/event-dispatcher": "^1.0"
+        "psr/event-dispatcher": "^1.0",
+        "symfony/event-dispatcher": "^5.4"
     },
     "autoload": {
         "psr-4": {

@@ -6,14 +6,12 @@
  * Date: 2021/11/22 15:10
  */
 
-namespace Wmoob;
-
-use Psr\EventDispatcher\StoppableEventInterface;
+namespace Wmoob\message;
 
 /**
  * 微盟云消息对象
  */
-class Message implements StoppableEventInterface
+class Message
 {
     /**
      * 商户id
@@ -77,20 +75,4 @@ class Message implements StoppableEventInterface
      * @var string
      */
     public $version;
-
-    /**
-     * 是否终止执行
-     *
-     * @var boolean
-     */
-    public $stopped;
-
-    /**
-     * @inheritDoc
-     */
-    public function isPropagationStopped(): bool
-    {
-        return $this->stopped;
-    }
-
 }
